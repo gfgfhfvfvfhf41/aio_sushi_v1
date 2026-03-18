@@ -11,12 +11,6 @@ CREATE TABLE IF NOT EXISTS users (
 """)
 db.commit()
 
-
-
-
-
-
-
 def add_user(user_id, name):
     cursor.execute(
         "INSERT INTO users VALUES (?, ?)",

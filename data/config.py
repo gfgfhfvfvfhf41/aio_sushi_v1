@@ -1,3 +1,8 @@
-TOKEN = "8726870307:AAHxwA4RX-7PU98TEXh3mOzkjeTsO4rfeUQ"
-#8621653700:AAEizQPy_0yXtdFefZr5hjto5QMcv5T545M - основа
-# - тест
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+token_main = os.getenv("TOKEN_MAIN")
+token_test = os.getenv("TOKEN_TEST")
+
+TOKEN = token_main 
