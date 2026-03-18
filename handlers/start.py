@@ -19,7 +19,13 @@ from aiogram import Bot as bot
 from aiogram import Dispatcher
 from functools import wraps
 import time
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
+
+admin_id = os.getenv("Admin_id")
+my_id = os.getenv("my_id")
 router = Router()
 
 class User:
@@ -72,8 +78,6 @@ async def cmd_start(message: Message, state: FSMContext):
         await state.clear()
         await message.answer("Введите имя")
         await state.set_state(ust.state_check)
-    #db.add_user(users_dict[user_id].user_id, )
-        #await message.answer("start")
 
 @router.message(ust.state_check)
 @safe_handler
@@ -84,17 +88,10 @@ async def reg_user(message: Message, state: FSMContext):
     users_dict[user_id].user_id = user_id
     users_dict[user_id].user_name = user_name
     db.add_user(user_id, users_dict[user_id].user_name)
-    #print(message.text)
 
 @router.callback_query(F.data == "just_buy")
 @safe_handler
 async def input_image_prompt(callback: CallbackQuery, state: FSMContext):
-    # msg = await callback.message.edit_text(
-    #     "Введите необходимые товары в формате:\n"
-    #     "Товар Количество\n"
-    #     "Товар Количество",
-    #     reply_markup=main_kb
-    # )
     msg = await safe_edit(
         callback.message,
         "Введите необходимые товары в формате:\n"
@@ -119,11 +116,9 @@ async def save_products(message: Message, state: FSMContext):
     user_nm = db.get_user(user_id)
     for line in lines:
         parts = line.split()
-
         if len(parts) >= 2:
             product = " ".join(parts[:-1])
             quantity = str(parts[-1])
-
             db_orders.add_order(
                 user_nm[1],
                 product,
@@ -132,12 +127,6 @@ async def save_products(message: Message, state: FSMContext):
                 created_at
             )
     await message.delete()
-    # await message.bot.edit_message_text(
-    #     chat_id=message.chat.id,
-    #     message_id=menu_msg_id,
-    #     text="✅ Товары сохранены",
-    #     reply_markup=main_kb
-    # )
     await safe_edit_by_id(
         message.bot,
         message.chat.id,
@@ -160,10 +149,6 @@ async def show_orders(callback: CallbackQuery):
         text += f"<b>{product}</b> — <b>{qty}</b> ({user}|{date})\n"
     if len(orders) == 0:
         text = "📦 Нет заказов"
-    # await callback.message.edit_text(
-    #     text,
-    #     reply_markup=orders_keyboard(orders)
-    # )
     await safe_edit(
         callback.message,
         text,
@@ -171,29 +156,6 @@ async def show_orders(callback: CallbackQuery):
     )
     await callback.answer()
 
-# @router.callback_query(F.data.startswith("buy_"))
-# @safe_handler
-# async def buy_product(callback: CallbackQuery):
-#     order_id = int(callback.data.split("_")[1])
-#     db_orders.delete_order(order_id)
-#     orders = db_orders.get_all_orders()
-#     text = "📦 Все заказы:\n\n"
-#     for order in orders:
-#         product = order[2]
-#         qty = order[3]
-#         text += f"{product} — {qty}\n"
-#     if len(orders) == 0:
-#         text = "✅ Всё куплено"
-#     await callback.message.edit_text(
-#         text,
-#         reply_markup=orders_keyboard(orders)
-#     )
-#     # await safe_edit(
-#     #     callback.message,
-#     #     text,
-#     #     orders_keyboard(orders)
-#     # )
-#     await callback.answer("Удалено")
 
 @router.callback_query(F.data.startswith("buy_"))
 @safe_handler
@@ -225,7 +187,6 @@ async def back_to(callback: CallbackQuery):
     user_id = callback.from_user.id
     user = db.get_user(user_id)
     if user:
-        #await callback.message.edit_text(f"Привет, {user[1]}", reply_markup = main_kb)
         await safe_edit(
             callback.message,
             f"Привет, {user[1]}",
@@ -236,12 +197,6 @@ async def back_to(callback: CallbackQuery):
 @router.callback_query(F.data == "express_buy")
 @safe_handler
 async def add_express_buy (callback: CallbackQuery, state: FSMContext):
-    # msg = await callback.message.edit_text(
-    #     "Введите необходимые товары в формате:\n"
-    #     "Товар Количество\n"
-    #     "Товар Количество",
-    #     reply_markup=main_kb
-    # )
     msg = await safe_edit(
         callback.message,
         "Введите необходимые товары в формате:\n"
@@ -257,7 +212,6 @@ async def add_express_buy (callback: CallbackQuery, state: FSMContext):
 @safe_handler
 async def save_express_products(message: Message, state: FSMContext):
     text = message.text
-    #print(text)
     user_id = message.from_user.id
     data1 = await state.get_data()
     menu_msg_id = data1["menu_msg_id"]
@@ -278,12 +232,6 @@ async def save_express_products(message: Message, state: FSMContext):
                 created_at
             )
     await message.delete()
-    # await message.bot.edit_message_text(
-    #     chat_id=message.chat.id,
-    #     message_id=menu_msg_id,
-    #     text="✅ Товары сохранены",
-    #     reply_markup=main_kb
-    # )
     await safe_edit_by_id(
         message.bot,
         message.chat.id,
@@ -292,22 +240,6 @@ async def save_express_products(message: Message, state: FSMContext):
         main_kb
     )
     await state.clear()
-    # global last_express_notify
-    # if time.time() - last_express_notify > 30:
-    #     orders = db_express_orders.get_all_express_orders()
-    #     if orders:
-    #         text = "⚡ Экспресс заказы:\n\n"
-    #         for order in orders:
-    #             product = order[2]
-    #             qty = order[3]
-    #             user = order[1]
-    #             text += f"{product} — {qty} ({user})\n"
-    #         await message.bot.send_message(
-    #             905618101,
-    #             text,
-    #             reply_markup=notify_kb()
-    #         )
-    #         last_express_notify = time.time()
     orders = db_express_orders.get_all_express_orders()
     if orders:
         text = "⚡ Экспресс заказы:\n\n"
@@ -317,7 +249,7 @@ async def save_express_products(message: Message, state: FSMContext):
             user = order[1]
             text += f"<b>{product}</b> — <b>{qty}</b> ({user})\n"
         await message.bot.send_message(
-            905618101,
+            admin_id,
             text,
             reply_markup=notify_kb()
         )
@@ -335,40 +267,12 @@ async def show_express_orders(callback: CallbackQuery):
         text += f"<b>{product}</b> — <b>{qty}</b> ({user}|{date})\n"
     if len(orders) == 0:
         text = "📦 Нет срочных заказов"
-    # await callback.message.edit_text(
-    #     text,
-    #     reply_markup=express_orders_keyboard(orders)
-    # )
     await safe_edit(
         callback.message,
         text,
         express_orders_keyboard(orders)
     )
     await callback.answer()
-
-# @router.callback_query(F.data.startswith("ebuy_"))
-# @safe_handler
-# async def buy_express_product(callback: CallbackQuery):
-#     order_id = int(callback.data.split("_")[1])
-#     db_express_orders.delete_express_order(order_id)
-#     orders = db_express_orders.get_all_express_orders()
-#     text = "📦 Срочные заказы:\n\n"
-#     for order in orders:
-#         product = order[2]
-#         qty = order[3]
-#         text += f"{product} — {qty}\n"
-#     if len(orders) == 0:
-#         text = "✅ Всё куплено"
-#     await callback.message.edit_text(
-#         text,
-#         reply_markup=express_orders_keyboard(orders)
-#     )
-#     # await safe_edit(
-#     #     callback.message,
-#     #     text,
-#     #     express_orders_keyboard(orders)
-#     # )
-#     await callback.answer("Удалено")
 
 @router.callback_query(F.data.startswith("ebuy_"))
 @safe_handler
@@ -399,7 +303,6 @@ async def back_to_ex(callback: CallbackQuery):
     user_id = callback.from_user.id
     user = db.get_user(user_id)
     if user:
-        #await callback.message.edit_text(f"Привет, {user[1]}", reply_markup = main_kb)
         await safe_edit(
             callback.message,
             f"Привет, {user[1]}",

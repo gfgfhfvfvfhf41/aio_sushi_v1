@@ -8,7 +8,6 @@ import asyncio
 
 async def main():
     dp.include_router(start.router)
-    #dp.include_router(menu.router)
     await bot.set_my_commands([
         BotCommand(command="start", description="Старт")
     ])
@@ -18,10 +17,6 @@ async def main():
         bot,
         polling_timeout=30
     )
-    #await dp.start_polling(bot)
-
-
-
 
 if __name__ == "__main__":
     asyncio.run(main())
