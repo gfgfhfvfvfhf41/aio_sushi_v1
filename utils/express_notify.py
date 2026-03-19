@@ -36,4 +36,4 @@ async def express_notify(bot):
                 last_express_message = msg.message_id
         except Exception as e:
             print("EXPRESS ERROR:", e)
-        await asyncio.sleep(15)
+        await asyncio.sleep(21600)

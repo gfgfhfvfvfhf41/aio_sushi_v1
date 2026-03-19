@@ -32,8 +32,8 @@ def start_scheduler(bot):
     scheduler.add_job(
         send_daily_orders,
         "cron",
-        hour=5,
-        minute=30,
+        hour=22,
+        minute=31,
         args=[bot]
     )
     scheduler.start()
