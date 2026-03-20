@@ -249,7 +249,7 @@ async def save_express_products(message: Message, state: FSMContext):
             user = order[1]
             text += f"<b>{product}</b> — <b>{qty}</b> ({user})\n"
         await message.bot.send_message(
-            admin_id,
+            my_id,
             text,
             reply_markup=notify_kb()
         )
@@ -320,3 +320,4 @@ async def cls(callback: CallbackQuery):
 async def close_notify(callback: CallbackQuery):
     await callback.message.delete()
     await callback.answer()
+

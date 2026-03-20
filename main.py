@@ -17,6 +17,6 @@ async def main():
         bot,
         polling_timeout=30
     )
-
+#aaaaaaaa blyat
 if __name__ == "__main__":
     asyncio.run(main())
