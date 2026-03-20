@@ -12,13 +12,6 @@ def orders_keyboard(orders):
                     callback_data=f"buy_{order_id}"
                 )
             ])
-    else:
-        buttons.append([
-            InlineKeyboardButton(
-                text="🔄 Обновить",
-                callback_data="refresh_orders"
-            )
-        ])
     buttons.append([
         InlineKeyboardButton(
             text="☑️ Назад",

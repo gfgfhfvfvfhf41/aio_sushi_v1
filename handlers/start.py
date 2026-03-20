@@ -140,10 +140,8 @@ async def save_products(message: Message, state: FSMContext):
 @safe_handler
 async def show_orders(callback: CallbackQuery):
     orders = db_orders.get_all_orders()
-    print(orders)
     text = "📦 Все заказы:\n\n"
     for order in orders:
-        print(order)
         user = order[1]
         product = order[2]
         qty = order[3]
